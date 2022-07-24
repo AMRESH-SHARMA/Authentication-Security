@@ -3,6 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
+const md5 = require("md5");
 
 const app = express();
 
@@ -11,11 +12,12 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));                  //Serve  css file
 
 mongoose.connect("mongodb://localhost:27017/userdb", {useNewUrlParser: true});
-const UserSchema = {                                        
+const userSchema = new mongoose.Schema ({                                        
     name: String,
     password: String
-};
-const User = mongoose.model("User", UserSchema);  
+});
+
+const User = mongoose.model("User", userSchema);  
 
 
 app.get("/", (req,res) => {
@@ -38,8 +40,8 @@ app.get("/logout", (req,res) => {
 
 app.post("/register", (req,res) => {
     const newUser =  new User({
-        name: req.body.username,
-        password: req.body.password
+        name: md5(req.body.username),               //md5 hashing
+        password: md5(req.body.password)
     });
     newUser.save((err) => {
         if(err) {
