@@ -1,0 +1,2 @@
+Create direct route for register, login, logout page but not for secrets page.
+if user's credentials found in database then render secrets page.
